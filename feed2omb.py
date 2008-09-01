@@ -2,6 +2,8 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008, Ciaran Gultnieks
 #
+# Version 0.3
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -63,10 +65,13 @@ for thisconfig in args:
         text+=' - '
       text+=shorturl
 
-      if not options.test:
+      if options.test:
+        print 'Message would be:'
+      else:
         print 'Sending new message:'
-        print '  '+text
+      print '  '+text.encode(sys.stdout.encoding,'replace')
 
+      if not options.test:
         password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
         password_mgr.add_password(None,config['apibaseurl'],config['user'],config['password'])
         handler=urllib2.HTTPBasicAuthHandler(password_mgr)
