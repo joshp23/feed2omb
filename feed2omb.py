@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008, Ciaran Gultnieks
 #
-# Version 0.3
+# Version 0.4
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ from urllib import urlencode
 from configobj import ConfigObj
 from optparse import OptionParser
 
-print "feed2omb version 0.2\nCopyright 2008 Ciaran Gultnieks\n"
+print "feed2omb version 0.4\nCopyright 2008 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -33,15 +33,26 @@ parser.add_option("-v","--version",dest="version",action="store_true",default=Fa
 						help="Display version and exit")
 parser.add_option("-u","--update",dest="update",action="store_true",default=False,
 						help="Update the feeds using the config files specified")
+parser.add_option("-e","--eat",dest="eat",action="store_true",default=False,
+						help="Eat items found - i.e. mark as sent, but do not send")
 parser.add_option("-t","--test",dest="test",action="store_true",default=False,
-						help="Test only - display new items but do not post to omb")
+						help="Test only - display local output but do not post to omb or mark as sent")
+parser.add_option("-m","--max",type="int",dest="max",default="0",
+						help="Specify maximum number of items to process for each feed")
 (options, args) = parser.parse_args()
 
 if options.version:
   sys.exit(0)
 
-if not options.update or len(args)==0:
-  print "Specify the --update option and one or more config files to update"
+if not (options.update or options.eat):
+  print "Specify either --update or --eat to process feeds"
+  sys.exit(1)
+if options.update and options.eat:
+  print "You can't specify both --update and --eat"
+  sys.exit(1)
+
+if len(args)==0:
+  print "No config files specified - specify one or more config files to process"
   sys.exit(1)
 
 for thisconfig in args:
@@ -51,6 +62,8 @@ for thisconfig in args:
 
   print 'Reading feed...'
   feed=feedparser.parse(config['feedurl'])
+
+  done=0
 
   for entry in reversed(feed.entries):
     if not "'"+entry.link+"'" in config['sentlinks']:
@@ -66,23 +79,35 @@ for thisconfig in args:
       text+=shorturl
 
       if options.test:
-        print 'Message would be:'
+        if options.eat:
+          print 'Eaten message would be:'
+        else:
+          print 'Sent message would be:'
       else:
-        print 'Sending new message:'
+        if options.eat:
+          print 'Eating new message:'
+        else:
+          print 'Sending new message:'
       print '  '+text.encode(sys.stdout.encoding,'replace')
 
       if not options.test:
-        password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
-        password_mgr.add_password(None,config['apibaseurl'],config['user'],config['password'])
-        handler=urllib2.HTTPBasicAuthHandler(password_mgr)
-        opener=urllib2.build_opener(handler)
-        data={'status':text}
-        resp=opener.open(config['apibaseurl']+'/statuses/update.xml',urlencode(data))
-        resp.close()
+        if options.update:
+          password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
+          password_mgr.add_password(None,config['apibaseurl'],config['user'],config['password'])
+          handler=urllib2.HTTPBasicAuthHandler(password_mgr)
+          opener=urllib2.build_opener(handler)
+          data={'status':text.encode('utf-8')}
+          resp=opener.open(config['apibaseurl']+'/statuses/update.xml',urlencode(data))
+          resp.close()
 
         config['sentlinks']["'"+entry.link+"'"]='sent'
 
         #Rewrite the config after each link to avoid double-posting if something goes wrong
         config.write()
+        
+      done+=1
+      if done>=options.max:
+        print "Reached requested limit"
+        break
 
 print 'Finished'
