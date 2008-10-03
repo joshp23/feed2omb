@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008, Ciaran Gultnieks
 #
-# Version 0.4
+# Version 0.5
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ from urllib import urlencode
 from configobj import ConfigObj
 from optparse import OptionParser
 
-print "feed2omb version 0.4\nCopyright 2008 Ciaran Gultnieks\n"
+print "feed2omb version 0.5\nCopyright 2008 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -37,7 +37,7 @@ parser.add_option("-e","--eat",dest="eat",action="store_true",default=False,
 						help="Eat items found - i.e. mark as sent, but do not send")
 parser.add_option("-t","--test",dest="test",action="store_true",default=False,
 						help="Test only - display local output but do not post to omb or mark as sent")
-parser.add_option("-m","--max",type="int",dest="max",default="0",
+parser.add_option("-m","--max",type="int",dest="max",default=0,
 						help="Specify maximum number of items to process for each feed")
 (options, args) = parser.parse_args()
 
@@ -65,13 +65,22 @@ for thisconfig in args:
 
   done=0
 
+  #Determine message mode...
+  if 'msgmode' in config:
+    msgmode=config['msgmode']
+  else:
+    msgmode='title'
+
   for entry in reversed(feed.entries):
     if not "'"+entry.link+"'" in config['sentlinks']:
       print 'Found new entry: '+entry.link
       bitly = urllib2.urlopen('http://bit.ly/api?url='+entry.link)
       shorturl = bitly.read()
       maxlen=140-len(shorturl)-4
-      text=entry.title
+      if msgmode=='authtitle':
+        text=entry.author+' - '+entry.title
+      else:
+        text=entry.title
       if len(text)>maxlen:
         text=text[:maxlen]+'... '
       else:
@@ -106,7 +115,7 @@ for thisconfig in args:
         config.write()
         
       done+=1
-      if done>=options.max:
+      if options.max >0 and done>=options.max:
         print "Reached requested limit"
         break
 
