@@ -25,6 +25,17 @@ from urllib import urlencode
 from configobj import ConfigObj
 from optparse import OptionParser
 
+
+#Get the author name for a particular entry
+def getauthor(entry):
+  if 'source' in entry and 'author_detail' in entry.source and 'name' in entry.source.author_detail:
+    return entry.source.author_detail.name
+  if 'author_detail' in entry and 'name' in entry.author_detail:
+    return entry.author_detail.name
+  else:
+    return ""
+
+
 print "feed2omb version 0.5\nCopyright 2008 Ciaran Gultnieks\n"
 
 #Deal with the command line...
@@ -78,7 +89,7 @@ for thisconfig in args:
       shorturl = bitly.read()
       maxlen=140-len(shorturl)-4
       if msgmode=='authtitle':
-        text=entry.author+' - '+entry.title
+        text=getauthor(entry)+' - '+entry.title
       else:
         text=entry.title
       if len(text)>maxlen:
