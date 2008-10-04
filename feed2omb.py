@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008, Ciaran Gultnieks
 #
-# Version 0.5
+# Version 0.51
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -36,7 +36,7 @@ def getauthor(entry):
     return ""
 
 
-print "feed2omb version 0.5\nCopyright 2008 Ciaran Gultnieks\n"
+print "feed2omb version 0.51\nCopyright 2008 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
