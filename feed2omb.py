@@ -85,8 +85,14 @@ for thisconfig in args:
   for entry in reversed(feed.entries):
     if not "'"+entry.link+"'" in config['sentlinks']:
       print 'Found new entry: '+entry.link
-      bitly = urllib2.urlopen('http://bit.ly/api?url='+entry.link)
-      shorturl = bitly.read()
+      try:
+        biturl='http://bit.ly/api?url='+entry.link
+        print 'Requesting short URL from "'+biturl+'"'
+        bitly = urllib2.urlopen(biturl)
+        shorturl = bitly.read()
+      except:
+        print 'Failed to get short URL'
+        shorturl='<no link>'
       maxlen=140-len(shorturl)-4
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
