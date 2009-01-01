@@ -114,7 +114,10 @@ for thisconfig in args:
           print 'Eating new message:'
         else:
           print 'Sending new message:'
-      print '  '+text.encode(sys.stdout.encoding,'replace')
+      if sys.stdout.encoding!=None:
+        print '  '+text.encode(sys.stdout.encoding,'replace')
+      else:
+        print '  <message hidden - output encoding cannot be determined>' 
 
       if not options.test:
         if options.update:
