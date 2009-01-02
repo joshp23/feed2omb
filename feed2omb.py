@@ -21,6 +21,7 @@
 import feedparser
 import urllib2
 import sys
+import re
 from urllib import urlencode
 from configobj import ConfigObj
 from optparse import OptionParser
@@ -82,6 +83,11 @@ for thisconfig in args:
   else:
     msgmode='title'
 
+  if 'messageregex' in config and 'messagereplace' in config:
+    msgregex=re.compile(config['messageregex'])
+  else:
+    msgregex=None
+
   for entry in reversed(feed.entries):
     if not "'"+entry.link+"'" in config['sentlinks']:
       print 'Found new entry: '+entry.link
@@ -98,6 +104,12 @@ for thisconfig in args:
         text=getauthor(entry)+' - '+entry.title
       else:
         text=entry.title
+
+      #Apply regular expression search/replace to the message body if
+      #requested...
+      if msgregex:
+        text=msgregex.sub(config['messagereplace'],text)
+
       if len(text)>maxlen:
         text=text[:maxlen]+'... '
       else:
