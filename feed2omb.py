@@ -1,8 +1,8 @@
 #
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
-# Copyright (C) 2008, Ciaran Gultnieks
+# Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.51
+# Version 0.6
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -36,8 +36,34 @@ def getauthor(entry):
   else:
     return ""
 
+#URL shorteners - each of these takes a URL and returns the
+#shortened version, along with the 'length' of the shortened
+#version. The length is quoted, and returned, because where
+#we allow the target OMB site to shorten for us, we don't
+#return the actual length here, but an assumed one.
+def shorten_bitly(url):
+  try:
+    biturl='http://bit.ly/api?url='+url
+    print 'Requesting short URL from "'+biturl+'"'
+    bitly = urllib2.urlopen(biturl)
+    shorturl = bitly.read()
+  except:
+    #Sometimes, bit.ly seems to refuse to give a result for
+    #a seemlingly innocuous URL - this is a fallback for that
+    #scenario...
+    print 'Failed to get short URL'
+    shorturl='<no link>'
+  return (shorturl,len(shorturl))
 
-print "feed2omb version 0.51\nCopyright 2008 Ciaran Gultnieks\n"
+def shorten_laconica(url):
+  return (url,22)
+
+def shorten_none(url):
+  return (url,len(url))
+
+
+
+print "feed2omb version 0.6\nCopyright 2008 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -83,6 +109,12 @@ for thisconfig in args:
   else:
     msgmode='title'
 
+  #Determine url shortening mode...
+  if 'urlshortener' in config:
+    urlshortener=config['urlshortener']
+  else:
+    urlshortener='bit.ly'
+
   if 'messageregex' in config and 'messagereplace' in config:
     msgregex=re.compile(config['messageregex'])
   else:
@@ -91,15 +123,15 @@ for thisconfig in args:
   for entry in reversed(feed.entries):
     if not "'"+entry.link+"'" in config['sentlinks']:
       print 'Found new entry: '+entry.link
-      try:
-        biturl='http://bit.ly/api?url='+entry.link
-        print 'Requesting short URL from "'+biturl+'"'
-        bitly = urllib2.urlopen(biturl)
-        shorturl = bitly.read()
-      except:
-        print 'Failed to get short URL'
-        shorturl='<no link>'
+
+      #Shorten the URL...
+      (shorturl,urllen) = {'bit.ly': shorten_bitly,
+                           'laconica': shorten_laconica,
+                           'none': shorten_none}[urlshortener](entry.link)
+
+      #See how much space we have left once the URL is there:
       maxlen=140-len(shorturl)-4
+
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
       else:
