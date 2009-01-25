@@ -63,7 +63,7 @@ def shorten_none(url):
 
 
 
-print "feed2omb version 0.6\nCopyright 2008 Ciaran Gultnieks\n"
+print "feed2omb version 0.6\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -130,7 +130,7 @@ for thisconfig in args:
                            'none': shorten_none}[urlshortener](entry.link)
 
       #See how much space we have left once the URL is there:
-      maxlen=140-len(shorturl)-4
+      maxlen=140-urllen-4
 
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
