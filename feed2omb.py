@@ -146,7 +146,12 @@ for thisconfig in args:
         text=text[:maxlen]+'... '
       else:
         text+=' - '
-      text+=shorturl
+      #Append the url. Don't bother using the shortened one if the full
+      #one fits...
+      if len(text+entry.link)<140:
+        text+=entry.link
+      else:
+        text+=shorturl
 
       if options.test:
         if options.eat:
