@@ -41,7 +41,9 @@ def getauthor(entry):
 #version. The length is quoted, and returned, because where
 #we allow the target OMB site to shorten for us, we don't
 #return the actual length here, but an assumed one.
-def shorten_bitly(url):
+#The second parameter is the host to use for shortening, which
+#is relevant only for shortening types that require it.
+def shorten_bitly(url,host):
   try:
     biturl='http://bit.ly/api?url='+url
     print 'Requesting short URL from "'+biturl+'"'
@@ -55,10 +57,34 @@ def shorten_bitly(url):
     shorturl='<no link>'
   return (shorturl,len(shorturl))
 
-def shorten_laconica(url):
+def shorten_laconica(url,host):
   return (url,22)
 
-def shorten_none(url):
+def shorten_lilurl(url,host):
+  try:
+    if host==None:
+      print "Configuration error - lilurl shortener requires a host"
+      sys.exit(1)
+    params={'longurl' : url}
+    data=urlencode(params)
+    req=urllib2.Request(host,data)
+    response=urllib2.urlopen(req)
+    result=response.read()
+    #It's a hack, but I don't want to get involved in "which parser,
+    #which dom, make sure you have these dependencies installed" just
+    #to pull a tiny bit of text out of a bigger bit of text, so...
+    index_start=result.find('href="')
+    index_end=result.find('"',index_start+6)
+    if index_start==-1 or index_end==-1:
+      raise Exception("Link not found")
+    shorturl=result[index_start+6:index_end]
+    return (shorturl,len(shorturl))
+  except:
+    print 'Failed to get short URL'
+    shorturl='<no link>'
+  return (shorturl,len(shorturl))
+
+def shorten_none(url,host):
   return (url,len(url))
 
 
@@ -112,8 +138,13 @@ for thisconfig in args:
   #Determine url shortening mode...
   if 'urlshortener' in config:
     urlshortener=config['urlshortener']
+    if 'urlshortenhost' in config:
+      urlshortenhost=config['urlshortenhost']
+    else:
+      urlshortenhost=None
   else:
     urlshortener='bit.ly'
+    urlshortenhost=None
 
   if 'messageregex' in config and 'messagereplace' in config:
     msgregex=re.compile(config['messageregex'])
@@ -126,8 +157,9 @@ for thisconfig in args:
 
       #Shorten the URL...
       (shorturl,urllen) = {'bit.ly': shorten_bitly,
+                           'lilurl': shorten_lilurl,
                            'laconica': shorten_laconica,
-                           'none': shorten_none}[urlshortener](entry.link)
+                           'none': shorten_none}[urlshortener](entry.link,urlshortenhost)
 
       #See how much space we have left once the URL is there:
       maxlen=140-urllen-4
