@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.7
+# Version 0.71
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -90,7 +90,7 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.7\nCopyright 2008-9 Ciaran Gultnieks\n"
+print "feed2omb version 0.71\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -158,6 +158,12 @@ for thisconfig in args:
     urlshortener='bit.ly'
     urlshortenhost=None
 
+  #Determin hashtag mode...
+  if 'hashtags' in config:
+    hashtags=config['hashtags']
+  else:
+    hashtags='none'
+
   if 'messageregex' in config and 'messagereplace' in config:
     msgregex=re.compile(config['messageregex'])
   else:
@@ -208,6 +214,15 @@ for thisconfig in args:
         text+=entry.link
       else:
         text+=shorturl
+
+      #Add hashtags from categories if that mode is enabled...
+      if hashtags=='category':
+        cats=entry.categories
+        for cat in cats:
+          (dontcare,cattxt)=cat
+          cattxt=' #'+cattxt
+          if len(text+cattxt)<140:
+            text+=cattxt
 
       if options.test:
         if options.eat:
