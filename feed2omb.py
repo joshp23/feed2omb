@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.6
+# Version 0.7
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ import feedparser
 import urllib2
 import sys
 import re
+from datetime import datetime
 from urllib import urlencode
 from configobj import ConfigObj
 from optparse import OptionParser
@@ -89,7 +90,7 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.6\nCopyright 2008-9 Ciaran Gultnieks\n"
+print "feed2omb version 0.7\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -135,6 +136,17 @@ for thisconfig in args:
   else:
     msgmode='title'
 
+  #Determine sent mode... (i.e. how we decide if we've already sent an entry)
+  if 'sentmode' in config:
+    sentmode=config['sentmode']
+  else:
+    sentmode='sentlinks'
+  if sentmode=='timestamp':
+    if 'lastsent' in config:
+      lastsent=datetime.strptime(config['lastsent'],"%Y-%m-%d %H:%M:%S")
+    else:
+      lastsent=datetime.min
+
   #Determine url shortening mode...
   if 'urlshortener' in config:
     urlshortener=config['urlshortener']
@@ -152,7 +164,19 @@ for thisconfig in args:
     msgregex=None
 
   for entry in reversed(feed.entries):
-    if not "'"+entry.link+"'" in config['sentlinks']:
+
+    #Decide if this is a new entry or one we've already sent...
+    isnew=False
+    if sentmode=='timestamp':
+      (t_year,t_month,t_day,t_hour,t_minute,t_second,t_x,t_x1,t_x2)=entry.updated_parsed
+      thissent=datetime(t_year,t_month,t_day,t_hour,t_minute,t_second)
+      if lastsent<thissent:
+        isnew=True
+    else:
+      if not "'"+entry.link+"'" in config['sentlinks']:
+        isnew=True
+
+    if isnew:
       print 'Found new entry: '+entry.link
 
       #Shorten the URL...
@@ -210,11 +234,17 @@ for thisconfig in args:
           resp=opener.open(config['apibaseurl']+'/statuses/update.xml',urlencode(data))
           resp.close()
 
+      #Record that we have sent this entry...
+      if sentmode=='timestamp':
+        lastsent=thissent
+        config['lastsent']=lastsent.strftime("%Y-%m-%d %H:%M:%S")
+      else:
         config['sentlinks']["'"+entry.link+"'"]='sent'
 
-        #Rewrite the config after each link to avoid double-posting if something goes wrong
+      #Rewrite the config after each link to avoid double-posting if something goes wrong
+      if not options.test:
         config.write()
-        
+
       done+=1
       if options.max >0 and done>=options.max:
         print "Reached requested limit"
