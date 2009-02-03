@@ -23,6 +23,7 @@ import urllib2
 import sys
 import re
 from datetime import datetime
+import time
 from urllib import urlencode
 from configobj import ConfigObj
 from optparse import OptionParser
@@ -143,7 +144,7 @@ for thisconfig in args:
     sentmode='sentlinks'
   if sentmode=='timestamp':
     if 'lastsent' in config:
-      lastsent=datetime.strptime(config['lastsent'],"%Y-%m-%d %H:%M:%S")
+      lastsent=datetime(*time.strptime(config['lastsent'],"%Y-%m-%d %H:%M:%S")[0:6])
     else:
       lastsent=datetime.min
 
