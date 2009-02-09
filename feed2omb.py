@@ -218,12 +218,13 @@ for thisconfig in args:
 
       #Add hashtags from categories if that mode is enabled...
       if hashtags=='category':
-        cats=entry.categories
-        for cat in cats:
-          (dontcare,cattxt)=cat
-          cattxt=' #'+cattxt
-          if len(text+cattxt)<140:
-            text+=cattxt
+        if 'categories' in entry:
+          cats=entry.categories
+          for cat in cats:
+            (dontcare,cattxt)=cat
+            cattxt=' #'+cattxt
+            if len(text+cattxt)<140:
+              text+=cattxt
 
       if options.test:
         if options.eat:
