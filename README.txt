@@ -1,10 +1,15 @@
 
 feed2omb - a tool for publishing atom/rss feeds to microblogging services
-Copyright (C) 2008, Ciaran Gultnieks
+Copyright (C) 2008-9, Ciaran Gultnieks
 
 == Usage ==
 
 Please see http://blog.ciarang.com/posts/feed2omb for full details
+
+To report problems, or make feature requests (which are very welcome)
+please use the tracker at:
+
+    http://projects.ciarang.com/p/feed2omb/issues/
 
 == License ==
 
