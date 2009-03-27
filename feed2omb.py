@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.72
+# Version 0.73
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -91,20 +91,20 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.72\nCopyright 2008-9 Ciaran Gultnieks\n"
+print "feed2omb version 0.73\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
 parser.add_option("-v","--version",dest="version",action="store_true",default=False,
-						help="Display version and exit")
+                  help="Display version and exit")
 parser.add_option("-u","--update",dest="update",action="store_true",default=False,
-						help="Update the feeds using the config files specified")
+                  help="Update the feeds using the config files specified")
 parser.add_option("-e","--eat",dest="eat",action="store_true",default=False,
-						help="Eat items found - i.e. mark as sent, but do not send")
+                  help="Eat items found - i.e. mark as sent, but do not send")
 parser.add_option("-t","--test",dest="test",action="store_true",default=False,
-						help="Test only - display local output but do not post to omb or mark as sent")
+                  help="Test only - display local output but do not post to omb or mark as sent")
 parser.add_option("-m","--max",type="int",dest="max",default=0,
-						help="Specify maximum number of items to process for each feed")
+                  help="Specify maximum number of items to process for each feed")
 (options, args) = parser.parse_args()
 
 if options.version:
@@ -124,7 +124,7 @@ if len(args)==0:
 for thisconfig in args:
 
   print "Reading config: "+thisconfig
-  config = ConfigObj(thisconfig)
+  config = ConfigObj(thisconfig,file_error=True)
 
   print 'Reading feed...'
   feed=feedparser.parse(config['feedurl'])
