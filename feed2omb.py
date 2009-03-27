@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.73
+# Version 0.74
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -91,7 +91,7 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.73\nCopyright 2008-9 Ciaran Gultnieks\n"
+print "feed2omb version 0.74\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -136,6 +136,12 @@ for thisconfig in args:
     msgmode=config['msgmode']
   else:
     msgmode='title'
+
+  #Determine if we are including links with the message...
+  if 'includelinks' in config and config['includelinks']=='no':
+    includelinks=False
+  else:
+    includelinks=True
 
   #Determine sent mode... (i.e. how we decide if we've already sent an entry)
   if 'sentmode' in config:
@@ -187,11 +193,14 @@ for thisconfig in args:
       print 'Found new entry: '+entry.link
 
       #Shorten the URL...
-      longurl=entry.link
-      (shorturl,urllen) = {'bit.ly': shorten_bitly,
-                           'lilurl': shorten_lilurl,
-                           'laconica': shorten_laconica,
-                           'none': shorten_none}[urlshortener](longurl,urlshortenhost)
+      if includelinks:
+        longurl=entry.link
+        (shorturl,urllen) = {'bit.ly': shorten_bitly,
+                             'lilurl': shorten_lilurl,
+                             'laconica': shorten_laconica,
+                             'none': shorten_none}[urlshortener](longurl,urlshortenhost)
+      else:
+        urllen=0
 
       #See how much space we have left once the URL is there:
       maxlen=140-urllen-4
@@ -213,14 +222,16 @@ for thisconfig in args:
 
       if len(text)>maxlen:
         text=text[:maxlen]+'... '
-      else:
+      elif includelinks:
         text+=' - '
+
       #Append the url. Don't bother using the shortened one if the full
       #one fits...
-      if len(text+longurl)<140:
-        text+=longurl
-      else:
-        text+=shorturl
+      if includelinks:
+        if len(text+longurl)<140:
+          text+=longurl
+        else:
+          text+=shorturl
 
       #Add hashtags from categories if that mode is enabled...
       if hashtags=='category':
