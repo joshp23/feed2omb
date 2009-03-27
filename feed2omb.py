@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.71
+# Version 0.72
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -91,7 +91,7 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.71\nCopyright 2008-9 Ciaran Gultnieks\n"
+print "feed2omb version 0.72\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
@@ -159,7 +159,7 @@ for thisconfig in args:
     urlshortener='bit.ly'
     urlshortenhost=None
 
-  #Determin hashtag mode...
+  #Determine hashtag mode...
   if 'hashtags' in config:
     hashtags=config['hashtags']
   else:
@@ -187,16 +187,22 @@ for thisconfig in args:
       print 'Found new entry: '+entry.link
 
       #Shorten the URL...
+      longurl=entry.link
       (shorturl,urllen) = {'bit.ly': shorten_bitly,
                            'lilurl': shorten_lilurl,
                            'laconica': shorten_laconica,
-                           'none': shorten_none}[urlshortener](entry.link,urlshortenhost)
+                           'none': shorten_none}[urlshortener](longurl,urlshortenhost)
 
       #See how much space we have left once the URL is there:
       maxlen=140-urllen-4
 
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
+      elif msgmode=='summary':
+        if 'summary' in entry:
+          text=entry.summary
+        else:
+          text=entry.title
       else:
         text=entry.title
 
@@ -211,8 +217,8 @@ for thisconfig in args:
         text+=' - '
       #Append the url. Don't bother using the shortened one if the full
       #one fits...
-      if len(text+entry.link)<140:
-        text+=entry.link
+      if len(text+longurl)<140:
+        text+=longurl
       else:
         text+=shorturl
 
