@@ -243,6 +243,7 @@ for thisconfig in args:
             if len(text+cattxt)<140:
               text+=cattxt
 
+      #Some console output to describe what's going on...
       if options.test:
         if options.eat:
           print 'Eaten message would be:'
@@ -258,6 +259,8 @@ for thisconfig in args:
       else:
         print '  <message hidden - output encoding cannot be determined>' 
 
+      #Actually send the message to the OMB service, if that's what we're
+      #supposed to be doing...
       if not options.test:
         if options.update:
           password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
