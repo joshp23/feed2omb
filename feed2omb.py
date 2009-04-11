@@ -17,10 +17,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import feedparser
-import urllib2
 import sys
+
+sys.path.append('extlib/feedparser')
+import feedparser
+
+import urllib2
 import re
 from datetime import datetime
 import time
