@@ -103,8 +103,8 @@ parser.add_option("-e","--eat",dest="eat",action="store_true",default=False,
                   help="Eat items found - i.e. mark as sent, but do not send")
 parser.add_option("-t","--test",dest="test",action="store_true",default=False,
                   help="Test only - display local output but do not post to omb or mark as sent")
-parser.add_option("-m","--max",type="int",dest="max",default=0,
-                  help="Specify maximum number of items to process for each feed")
+parser.add_option("-m","--max",type="int",dest="max",default=-1,
+                  help="Specify maximum number of items to process for each feed - overrides 'maxpost' in individual config files. Use 0 to post everything.")
 (options, args) = parser.parse_args()
 
 if options.version:
@@ -136,6 +136,13 @@ for thisconfig in args:
     msgmode=config['msgmode']
   else:
     msgmode='title'
+
+  #Determine maximum items to post (for this feed - command-line --max can
+  #override...
+  if 'maxpost' in config:
+    maxpost=int(config['maxpost'])
+  else:
+    maxpost=2
 
   #Determine if we are including links with the message...
   if 'includelinks' in config and config['includelinks']=='no':
@@ -282,9 +289,15 @@ for thisconfig in args:
       if not options.test:
         config.write()
 
+      #Keep track of how many items we've posted and stop if we reach the
+      #requested limit
       done+=1
-      if options.max >0 and done>=options.max:
+      thismax=options.max
+      if options.max==-1:
+        thismax=maxpost
+      if thismax>0 and done>=thismax:
         print "Reached requested limit"
         break
 
 print 'Finished'
+
