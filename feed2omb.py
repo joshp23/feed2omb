@@ -22,12 +22,14 @@ import sys
 sys.path.append('extlib/feedparser')
 import feedparser
 
+sys.path.append('extlib/configobj')
+from configobj import ConfigObj
+
 import urllib2
 import re
 from datetime import datetime
 import time
 from urllib import urlencode
-from configobj import ConfigObj
 from optparse import OptionParser
 
 
