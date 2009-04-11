@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.8
+# Version 0.81
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -95,7 +95,7 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.8\nCopyright 2008-9 Ciaran Gultnieks\n"
+print "feed2omb version 0.81\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
