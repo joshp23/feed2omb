@@ -141,6 +141,9 @@ for thisconfig in args:
   else:
     msgmode='title'
 
+  #Notice source - hard-coded for now
+  source = 'feed2omb'
+
   #Determine maximum items to post (for this feed - command-line --max can
   #override...
   if 'maxpost' in config:
@@ -278,7 +281,7 @@ for thisconfig in args:
           password_mgr.add_password(None,config['apibaseurl'],config['user'],config['password'])
           handler=urllib2.HTTPBasicAuthHandler(password_mgr)
           opener=urllib2.build_opener(handler)
-          data={'status':text.encode('utf-8')}
+          data={'status':text.encode('utf-8'),'source':source}
           resp=opener.open(config['apibaseurl']+'/statuses/update.xml',urlencode(data))
           resp.close()
 
