@@ -179,6 +179,12 @@ for thisconfig in args:
     urlshortener='bit.ly'
     urlshortenhost=None
 
+  #If we've been told to use a lilurl-based shortening host, make sure
+  #we've been told which one...
+  if urlshortener=='lilurl' and urlshortenhost==None:
+    print "Host must be specified for lilurl-based shortener"
+    sys.exit(1)
+
   #Determine hashtag mode...
   if 'hashtags' in config:
     hashtags=config['hashtags']
