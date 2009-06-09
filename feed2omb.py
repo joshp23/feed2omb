@@ -18,11 +18,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import os
 
-sys.path.append('extlib/feedparser')
+sys.path.append(os.path.join(sys.path[0],'extlib/feedparser'))
 import feedparser
 
-sys.path.append('extlib/configobj')
+sys.path.append(os.path.join(sys.path[0],'extlib/configobj'))
 from configobj import ConfigObj
 
 import urllib2
