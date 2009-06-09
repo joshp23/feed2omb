@@ -96,10 +96,11 @@ def shorten_none(url,host):
 
 
 
-print "feed2omb version 0.81\nCopyright 2008-9 Ciaran Gultnieks\n"
 
 #Deal with the command line...
 parser=OptionParser()
+parser.add_option("-d", "--debug", dest="debug", action="store_true", default=False,
+                  help="Print debugging info on standard output")
 parser.add_option("-v","--version",dest="version",action="store_true",default=False,
                   help="Display version and exit")
 parser.add_option("-u","--update",dest="update",action="store_true",default=False,
@@ -112,7 +113,14 @@ parser.add_option("-m","--max",type="int",dest="max",default=-1,
                   help="Specify maximum number of items to process for each feed - overrides 'maxpost' in individual config files. Use 0 to post everything.")
 (options, args) = parser.parse_args()
 
+#Redirect output to log file in current directory unless told otherwise
+savout = sys.stdout
+if not (options.debug or options.eat or options.test or options.version):
+  of = open('feed2omb.log', 'a')
+  sys.stdout = of
+
 if options.version:
+  print "feed2omb version 0.81\nCopyright 2008-9 Ciaran Gultnieks"
   sys.exit(0)
 
 if not (options.update or options.eat):
@@ -314,4 +322,6 @@ for thisconfig in args:
         break
 
 print 'Finished'
+
+sys.stdout = savout
 
