@@ -200,11 +200,23 @@ for thisconfig in args:
   else:
     hashtags='none'
 
+  #See if we are going to apply one or more regular expressions to
+  #the messages. When we're done, we'll have two lists, msgregex being
+  #all the precompiled regular expressions, and msgreplace being their
+  #corresponding replacement strings.
+  msgregex=[]
+  msgreplace=[]
   if 'messageregex' in config and 'messagereplace' in config:
-    msgregex=re.compile(config['messageregex'])
-  else:
-    msgregex=None
+    creg=config.as_list('messageregex')
+    crep=config.as_list('messagereplace')
+    if len(creg)!=len(crep):
+      print "You must give the same number of regular expressions and replacements"
+      sys.exit(1)
+    for i in range(len(creg)):
+      msgregex.append(re.compile(creg[i]))
+      msgreplace.append(crep[i])
 
+  #Finally we get to actually process the feed entries...
   for entry in reversed(feed.entries):
 
     #Decide if this is a new entry or one we've already sent...
@@ -232,7 +244,10 @@ for thisconfig in args:
         urllen=0
 
       #See how much space we have left once the URL is there:
-      maxlen=140-urllen-4
+      maxlen=140
+      if urllen>0:
+        #We will be adding " - " as well as the URL
+        maxlen-=3+urllen
 
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
@@ -244,19 +259,19 @@ for thisconfig in args:
       else:
         text=entry.title
 
-      #Apply regular expression search/replace to the message body if
+      #Apply regular expression search/replaces to the message body if
       #requested...
-      if msgregex:
-        text=msgregex.sub(config['messagereplace'],text)
+      for i in range(len(msgregex)):
+        text=msgregex[i].sub(msgreplace[i],text)
 
+      #Truncate the message text if necessary...
       if len(text)>maxlen:
-        text=text[:maxlen]+'... '
-      elif includelinks:
-        text+=' - '
+        text=text[:maxlen-3]+'...'
 
       #Append the url. Don't bother using the shortened one if the full
       #one fits...
       if includelinks:
+        text+=' - '
         if len(text+longurl)<140:
           text+=longurl
         else:
