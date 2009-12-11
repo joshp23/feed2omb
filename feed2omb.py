@@ -33,6 +33,11 @@ import time
 from urllib import urlencode
 from optparse import OptionParser
 
+#Supressing all warnings, just to get rid of all the deprecation warnings
+#that are spewed out by xmpppy...
+import warnings
+warnings.simplefilter("ignore")
+
 
 #Get the author name for a particular entry
 def getauthor(entry):
@@ -308,17 +313,31 @@ for thisconfig in args:
       else:
         print '  <message hidden - output encoding cannot be determined>' 
 
-      #Actually send the message to the OMB service, if that's what we're
-      #supposed to be doing...
+      #Actually send the message, if that's what we're supposed to be doing...
       if not options.test:
         if options.update:
-          password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
-          password_mgr.add_password(None,config['apibaseurl'],config['user'],config['password'])
-          handler=urllib2.HTTPBasicAuthHandler(password_mgr)
-          opener=urllib2.build_opener(handler)
-          data={'status':text.encode('utf-8'),'source':source}
-          resp=opener.open(config['apibaseurl']+'/statuses/update.xml',urlencode(data))
-          resp.close()
+
+          #OMB API send...
+          if 'apibaseurl' in config and config['apibaseurl']!="":
+            password_mgr=urllib2.HTTPPasswordMgrWithDefaultRealm()
+            password_mgr.add_password(None,config['apibaseurl'],config['user'],config['password'])
+            handler=urllib2.HTTPBasicAuthHandler(password_mgr)
+            opener=urllib2.build_opener(handler)
+            data={'status':text.encode('utf-8'),'source':source}
+            resp=opener.open(config['apibaseurl']+'/statuses/update.xml',urlencode(data))
+            resp.close()
+
+          #XMPP send...
+          if 'xmpp_server' in config and config['xmpp_server']!="":
+            import xmpp
+            #Note that we connect and disconnect for each message currently!
+
+            jid=xmpp.protocol.JID(config['xmpp_jid'])
+            client=xmpp.Client(jid.getDomain(),debug=[])
+            con=client.connect()
+            client.auth(jid.getNode(),config['xmpp_password'],resource="feed2omb")
+            client.send(xmpp.protocol.Message(config['xmpp_to'],text))
+            client.disconnect()
 
       #Record that we have sent this entry...
       if sentmode=='timestamp':
