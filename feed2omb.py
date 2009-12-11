@@ -2,7 +2,7 @@
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
 # Copyright (C) 2008-2009, Ciaran Gultnieks
 #
-# Version 0.81
+# Version 0.82
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -125,7 +125,7 @@ if not (options.debug or options.eat or options.test or options.version):
   sys.stdout = of
 
 if options.version:
-  print "feed2omb version 0.81\nCopyright 2008-9 Ciaran Gultnieks"
+  print "feed2omb version 0.82\nCopyright 2008-9 Ciaran Gultnieks"
   sys.exit(0)
 
 if not (options.update or options.eat):
