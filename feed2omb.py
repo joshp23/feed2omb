@@ -150,6 +150,11 @@ for thisconfig in args:
   else:
     msgmode='title'
 
+  #Determine maximum message length...
+  maxlen=140
+  if 'maxlen' in config:
+    maxlen=int(config['maxlen'])
+
   #Notice source - hard-coded for now
   source = 'feed2omb'
 
@@ -244,10 +249,10 @@ for thisconfig in args:
         urllen=0
 
       #See how much space we have left once the URL is there:
-      maxlen=140
-      if urllen>0:
+      charsleft=maxlen
+      if urllen>0 and includelinks:
         #We will be adding " - " as well as the URL
-        maxlen-=3+urllen
+        charsleft-=3+urllen
 
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
@@ -265,14 +270,14 @@ for thisconfig in args:
         text=msgregex[i].sub(msgreplace[i],text)
 
       #Truncate the message text if necessary...
-      if len(text)>maxlen:
-        text=text[:maxlen-3]+'...'
+      if len(text)>charsleft:
+        text=text[:charsleft-3]+'...'
 
       #Append the url. Don't bother using the shortened one if the full
       #one fits...
       if includelinks:
         text+=' - '
-        if len(text+longurl)<140:
+        if len(text+longurl)<maxlen:
           text+=longurl
         else:
           text+=shorturl
@@ -284,7 +289,7 @@ for thisconfig in args:
           for cat in cats:
             (dontcare,cattxt)=cat
             cattxt=' #'+cattxt
-            if len(text+cattxt)<140:
+            if len(text+cattxt)<maxlen:
               text+=cattxt
 
       #Some console output to describe what's going on...
