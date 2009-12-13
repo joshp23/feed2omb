@@ -142,6 +142,9 @@ if len(args)==0:
   print "No config files specified - specify one or more config files to process"
   sys.exit(1)
 
+#Set user agent for the feed parser...
+feedparser.USER_AGENT="feed2omb/0.82 +http://projects.ciarang.com/p/feed2omb/"
+
 for thisconfig in args:
 
   print "Reading config: "+thisconfig
