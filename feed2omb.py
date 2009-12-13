@@ -43,10 +43,13 @@ warnings.simplefilter("ignore")
 def getauthor(entry):
   if 'source' in entry and 'author_detail' in entry.source and 'name' in entry.source.author_detail:
     return entry.source.author_detail.name
-  if 'author_detail' in entry and 'name' in entry.author_detail:
-    return entry.author_detail.name
-  else:
-    return ""
+  if 'author_detail' in entry:
+    if 'name' in entry.author_detail:
+      return entry.author_detail.name
+    return entry.author_detail
+  if 'author' in entry:
+    return entry.author
+  return ""
 
 #URL shorteners - each of these takes a URL and returns the
 #shortened version, along with the 'length' of the shortened
