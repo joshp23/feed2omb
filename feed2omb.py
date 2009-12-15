@@ -267,11 +267,13 @@ for thisconfig in args:
 
       if msgmode=='authtitle':
         text=getauthor(entry)+' - '+entry.title
-      elif msgmode=='summary':
+      elif msgmode=='summary' or msgmode=='authsummary':
         if 'summary' in entry:
           text=entry.summary
         else:
           text=entry.title
+        if msgmode=='authsummary':
+          text=getauthor(entry)+' - '+text
       else:
         text=entry.title
 
