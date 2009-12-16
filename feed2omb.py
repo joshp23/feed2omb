@@ -166,8 +166,10 @@ for thisconfig in args:
   if 'maxlen' in config:
     maxlen=int(config['maxlen'])
 
-  #Notice source - hard-coded for now
+  #Notice source
   source = 'feed2omb'
+  if 'source' in config:
+    source=config['source']
 
   #Determine maximum items to post (for this feed - command-line --max can
   #override...
