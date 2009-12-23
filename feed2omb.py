@@ -105,6 +105,31 @@ def shorten_lilurl(url, host):
     return (shorturl, len(shorturl))
 
 
+def shorten_yourls(url, host):
+    try:
+        if host is None:
+            print "Configuration error - yourls shortener requires a host"
+            sys.exit(1)
+        params = {'url': url, 'action': 'shorturl'}
+        data = urlencode(params)
+        req = urllib2.Request(host + '/index.php', data)
+        response = urllib2.urlopen(req)
+        result = response.read()
+        #It's a hack, but I don't want to get involved in "which parser,
+        #which dom, make sure you have these dependencies installed" just
+        #to pull a tiny bit of text out of a bigger bit of text, so...
+        index_start = result.find('<p>Short URL: <code><a href="')
+        index_end = result.find('"', index_start + 29)
+        if index_start == -1 or index_end == -1:
+            raise Exception("Link not found")
+        shorturl = result[index_start + 29: index_end]
+        return (shorturl, len(shorturl))
+    except:
+        print 'Failed to get short URL'
+        shorturl = '<no link>'
+    return (shorturl, len(shorturl))
+
+
 def shorten_none(url, host):
     return (url, len(url))
 
@@ -266,10 +291,11 @@ for thisconfig in args:
             #Shorten the URL...
             if includelinks:
                 longurl = entry.link
-                (shorturl, urllen) = {'bit.ly': shorten_bitly,
-                                     'lilurl': shorten_lilurl,
-                                     'laconica': shorten_laconica,
-                                     'none': shorten_none} \
+                shorturl, urllen = {'bit.ly': shorten_bitly,
+                                    'lilurl': shorten_lilurl,
+                                    'laconica': shorten_laconica,
+                                    'yourls': shorten_yourls,
+                                    'none': shorten_none} \
                                  [urlshortener](longurl, urlshortenhost)
             else:
                 urllen = 0
