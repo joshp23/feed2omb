@@ -394,10 +394,6 @@ for thisconfig in args:
                             resource="feed2omb")
                         client.send(xmpp.protocol.Message(config['xmpp_to'],
                             text))
-                        try:
-                            client.disconnect()
-                        except:
-                            pass
 
             #Record that we have sent this entry...
             if sentmode == 'timestamp':
