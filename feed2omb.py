@@ -308,7 +308,7 @@ for thisconfig in args:
             if includelinks:
                 longurl = entry.link
                 shorturl, urllen = {'bit.ly': shorten_bitly,
-                                    'j.mp': short_jmp,
+                                    'j.mp': shorten_jmp,
                                     'lilurl': shorten_lilurl,
                                     'laconica': shorten_laconica,
                                     'yourls': shorten_yourls,
