@@ -76,6 +76,22 @@ def shorten_bitly(url, host):
     return (shorturl, len(shorturl))
 
 
+def shorten_jmp(url, host):
+    try:
+        biturl = 'http://j.mp/api?url=' + url
+        print 'Requesting short URL from "' + biturl + '"'
+        bitly = urllib2.urlopen(biturl)
+        shorturl = bitly.read()
+    except:
+        #Sometimes, j.mp seems to refuse to give a result for
+        #a seemlingly innocuous URL - this is a fallback for that
+        #scenario...
+        print 'Failed to get short URL'
+        shorturl = '<no link>'
+    return (shorturl, len(shorturl))
+
+
+
 def shorten_laconica(url, host):
     return (url, 22)
 
@@ -292,6 +308,7 @@ for thisconfig in args:
             if includelinks:
                 longurl = entry.link
                 shorturl, urllen = {'bit.ly': shorten_bitly,
+                                    'j.mp': short_jmp,
                                     'lilurl': shorten_lilurl,
                                     'laconica': shorten_laconica,
                                     'yourls': shorten_yourls,
