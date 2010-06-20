@@ -150,6 +150,11 @@ def shorten_none(url, host):
     return (url, len(url))
 
 
+if sys.version_info < (2, 4):
+    print "Python 2.4 or later is required."
+    sys.exit(1)
+
+
 #Deal with the command line...
 parser = OptionParser()
 parser.add_option("-d", "--debug", action="store_true", default=False,
