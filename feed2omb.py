@@ -174,16 +174,6 @@ parser.add_option("-m", "--max", type="int", default=-1,
                        "files. Use 0 to post everything.")
 (options, args) = parser.parse_args()
 
-#Redirect output to log file in current directory unless told otherwise
-savout = sys.stdout
-if not (options.debug or options.eat or options.test or options.version):
-    of = open('feed2omb.log', 'a')
-    sys.stdout = of
-
-if options.version:
-    print "feed2omb version 0.9\nCopyright 2008-9 Ciaran Gultnieks"
-    sys.exit(0)
-
 if not (options.update or options.eat):
     print "Specify either --update or --eat to process feeds"
     sys.exit(1)
@@ -195,6 +185,16 @@ if len(args) == 0:
     print "No config files specified - specify one or more config files " + \
           "to process"
     sys.exit(1)
+
+#Redirect output to log file in current directory unless told otherwise
+savout = sys.stdout
+if not (options.debug or options.eat or options.test or options.version):
+    of = open('feed2omb.log', 'a')
+    sys.stdout = of
+
+if options.version:
+    print "feed2omb version 0.9\nCopyright 2008-9 Ciaran Gultnieks"
+    sys.exit(0)
 
 #Set user agent for the feed parser...
 feedparser.USER_AGENT = "feed2omb/0.9 +http://projects.ciarang.com/p/feed2omb/"
