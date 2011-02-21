@@ -1,8 +1,8 @@
 
 feed2omb - a tool for publishing atom/rss feeds to microblogging services
-Copyright (C) 2008-9, Ciaran Gultnieks
+Copyright (C) 2008-11, Ciaran Gultnieks
 
-Version 0.9
+Version 0.9.1
 
 == Usage ==
 

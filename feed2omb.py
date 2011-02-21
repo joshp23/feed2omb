@@ -1,8 +1,8 @@
 #
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
-# Copyright (C) 2008-2009, Ciaran Gultnieks
+# Copyright (C) 2008-2011, Ciaran Gultnieks
 #
-# Version 0.9
+# Version 0.9.1
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -63,7 +63,8 @@ def getauthor(entry):
 
 def shorten_bitly(url, host):
     try:
-        biturl = 'http://bit.ly/api?url=' + url
+        biturl = ('http://api.bitly.com/v3/shorten?format=txt&longUrl='
+                + url + '&apiKey=' + host)
         print 'Requesting short URL from "' + biturl + '"'
         bitly = urllib2.urlopen(biturl)
         shorturl = bitly.read()
@@ -193,11 +194,11 @@ if not (options.debug or options.eat or options.test or options.version):
     sys.stdout = of
 
 if options.version:
-    print "feed2omb version 0.9\nCopyright 2008-9 Ciaran Gultnieks"
+    print "feed2omb version 0.9.1\nCopyright 2008-11 Ciaran Gultnieks"
     sys.exit(0)
 
 #Set user agent for the feed parser...
-feedparser.USER_AGENT = "feed2omb/0.9 +http://projects.ciarang.com/p/feed2omb/"
+feedparser.USER_AGENT = "feed2omb/0.9.1 +http://projects.ciarang.com/p/feed2omb/"
 
 for thisconfig in args:
 
@@ -258,13 +259,20 @@ for thisconfig in args:
         else:
             urlshortenhost = None
     else:
-        urlshortener = 'bit.ly'
-        urlshortenhost = None
+        urlshortener = 'lilurl'
+        urlshortenhost = 'http://ur1.ca'
 
     #If we've been told to use a lilurl-based shortening host, make sure
     #we've been told which one...
     if urlshortener == 'lilurl' and urlshortenhost is None:
         print "Host must be specified for lilurl-based shortener"
+        sys.exit(1)
+
+    #If we've been told to use bit.ly, make sure we have an API key...
+    if urlshortener == 'bit.ly' and urlshortenhost is None:
+        print "API key must be specified for bit.ly"
+        print "Option one - register, get key, put in config file"
+        print "Option two - use a different shortener"
         sys.exit(1)
 
     #Determine hashtag mode...
