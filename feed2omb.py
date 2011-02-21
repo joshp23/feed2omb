@@ -64,7 +64,8 @@ def getauthor(entry):
 def shorten_bitly(url, host):
     try:
         biturl = ('http://api.bitly.com/v3/shorten?format=txt&longUrl='
-                + url + '&apiKey=' + host)
+                + url + '&apiKey=' + config['urlshortenkey'] +
+                "&login=" + config['urlshortenlogin'])
         print 'Requesting short URL from "' + biturl + '"'
         bitly = urllib2.urlopen(biturl)
         shorturl = bitly.read()
@@ -269,9 +270,10 @@ for thisconfig in args:
         sys.exit(1)
 
     #If we've been told to use bit.ly, make sure we have an API key...
-    if urlshortener == 'bit.ly' and urlshortenhost is None:
-        print "API key must be specified for bit.ly"
-        print "Option one - register, get key, put in config file"
+    if urlshortener == 'bit.ly' and (not config.has_key('urlshortenkey') or
+            not config.has_key('urlshortenlogin')):
+        print "Login and API key must be specified for bit.ly"
+        print "Option one - register, get details, put in config file"
         print "Option two - use a different shortener"
         sys.exit(1)
 
