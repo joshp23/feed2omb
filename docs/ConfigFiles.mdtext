@@ -1,0 +1,190 @@
+# Introduction
+
+Each config file defines the details of a feed and the service you post it to, along with various details about how the feed content should be handled.
+
+The sample configuration file included with the software contains instructions for use and should be used as the basis for creating new ones. Each directive is explained in more detail below.
+
+# Configuration Directives
+
+##feedurl
+
+Specifies the URL of the feed you want to post. The feed can be Atom or RSS, and any version of either. Example:
+
+    feedurl = http://example.com/feed
+
+##apibaseurl
+
+Specifies base API URL for the microblogging service you want to post to. Example:
+
+    apibaseurl = http://identi.ca/api
+
+If this field is blank (or missing), messages will not be posted to a microblog at all. This would only be useful if you are sending to [[XMPP]] instead. See below for how to configure that.
+
+##user
+
+Specifies the username on the target microblogging service. Example:
+
+    user = example_user
+
+##password
+
+Specifies the user's password on the target microblogging service. Example:
+
+    password = example_password
+
+##urlshortener
+
+Specifies how urls are shortened. Possible values are:
+
+* lilurl - use a lilURL-based shortening service - specify the host using the urlshortenhost directive
+* yourls - use a [YOURLS](http://yourls.org/)-based shortening service - specify the host using the urlshortenhost directive
+* bit.ly - shorten the url using the service at http://bit.ly (default)
+* laconica - assume that Laconica will shorten the url automatically
+* none - do not shorten (drastically reducing available message space)
+
+Example:
+
+    urlshortener = lilurl
+
+#urlshortenhost
+
+If the 'lilurl' or 'yourls' urlshortener is used, this specifies the host to use, i.e. the address of the server. Example:
+
+    urlshortenhost = http://ur1.ca
+
+#urlshortenlogin and urlshortenkey
+
+If using the bit.ly URL shortener, you need to use these to specify your login and API key.
+
+Example:
+
+    urlshortenlogin = eric
+    urlshortenkey = 43784748AB747348EEF
+
+#shortenalways
+
+If this is set to no (or absent altogether), URLs will only be shortened if they would otherwise not fit along with the message within the 140 character limit.
+
+If it's set to yes, shortened URLs will always be used.
+
+Example:
+
+    shortenalways = yes
+
+#sentmode
+
+This specifies the 'sent mode', which is how feed2omb decides if  an entry from the feed has already been sent to the OMB service. There are two possible modes:
+
+* sentlinks - this uses the links attached to each entry, and stores a list of all those that have been sent previously (default)
+* timestamp - keeps track of the timestamp of the most recent entry and only sends newer ones
+
+In general, it is better to use the 'timestamp' mode, since 'sentlinks' results in an ever-expanding config file as new links are added. However, some feeds do not behave well, either by omitting timestamps altogether, or by changing them so links are reposted when you don't want them to be.
+Example:
+
+    sentmode = timestamp
+    
+#msgmode
+
+Specifies the message mode, i.e. how the OMB message is formed from the available information in the feed entries. Available options are:
+
+* title - just the title of the entry (default)
+* authtitle - the author followed by the title
+* summary - use the entry's summary (description in RSS), falling back on the title if there is no summary
+
+Example:
+
+    msgmode = title
+
+#includelinks
+
+Determines if links be appended to the message. Default is 'yes' - to get rid of them, set it to 'no'.
+
+Example:
+
+     includelinks = yes
+
+#messageregex and messagereplace
+    
+These directives, if included, allow a regular expression search and replace on the message before it is sent. This can be used, for example, to prepend boilerplate text to the message (which might be used if you are directing multiple feeds to the same account) or to remove the same (which might be useful when reposting twitter content to an open account elsewhere)
+
+Much more creative things are possible with this, but the following example would remove the text "MarsPhoenix:" from the start of all messages:
+
+    messageregex = 'MarsPhoenix:(.*)'
+    messagereplace = '\1'
+
+On the other hand, this one ADDS 'Example:' to the start of all messages:
+
+    messageregex = '{.*}'
+    messagereplace = 'Example:\0'
+
+You can also have multiple regular expressions and replacement strings, by making both entries a comma-separated list. The number of expressions and replacements must match. For example:
+
+    messageregex = 'red','green'
+    messagereplace = 'blue','yellow'
+
+will replace all occurrences of 'red' with 'blue', and all occurrences of 'green' with 'yellow'.
+
+#hashtags
+
+Specifies the hashtags mode. If this is set to 'category', then any categories specified in the feed's entries will be appended to the message as hashtags, so long as there is space to do so. Example:
+
+    hashtags = category
+    
+#maxpost
+
+Specifies the maximum number of new entries from a feed that are processed in one session (i.e. execution of the script). This can be used for [[FloodControl]].
+
+If not specified, it defaults to 2. Setting it to 0 means unlimited. The configuration done here for an individual feed can be overridden at [[Command-Line]] level using the --max option.
+
+Example:
+
+    maxpost = 4
+
+#maxlen
+
+Allows a different maximum message length to be specified, instead of the default 140 characters.
+
+Example:
+
+    maxlen = 300
+
+#source
+
+Allows configuration of the source that is passed to the microblog when a message is posted.
+
+Example:
+
+    source = feed2omb
+
+#xmpp_server
+
+The XMPP server to use for sending. Leave out, or blank, for no XMPP, which is the default. If this setting is specified, all the other xmpp_ settings are also required. Otherwise they are ignored.
+
+Example:
+
+    xmpp_server = im.example.com
+
+#xmpp_jid
+
+The JID for the source of the messages.
+
+Example:
+
+    xmpp_jid = from@im.example.com
+
+#xmpp_password
+
+The password of the source user
+
+Example:
+
+    xmpp_password = 1234
+
+#xmpp_to
+
+Where to send the XMPP messages
+
+Example:
+
+    xmpp_to = dest@another.example.com
+
