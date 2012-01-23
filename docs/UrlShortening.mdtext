@@ -1,0 +1,9 @@
+Usually (you can turn this off if appropriate) notices are posted to the microblogging service with a link to the feed entry's content, as supplied in the feed.
+
+In order to provide the maximum available space for the message itself, given the character limit (140 by default, but this is configurable), feed2omb can automatically shorten the URL for you using various URL shortening services.
+
+When shortening is enabled, it will only actually be used if it's necessary. For example, if the whole message AND the full URL fit within the character limit, no shortening is performed. Otherwise, the URL will be shortened using the selected service, and then if the message is still too long to fit, the message itself will be truncated, and "..." added to show this has happened.
+
+However, you can override this behaviour and force URLs to ALWAYS be shortened using the 'shortenalways' configuration directive.
+
+URL shortening is controlled by the configuration file for the feed. See the urlshortener directive in the [[ConfigFiles]] documentation for more details.

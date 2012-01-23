@@ -1,0 +1,36 @@
+# Requirements
+
+You will need:
+
+* Python 2.5 or later
+* Universal Feed Parser - Included in the extlib directory, so you don't need to do anything unless you want a different version from [http://www.feedparser.org](http://www.feedparser.org)
+* ConfigObj - Included in the extlib directory, so you don't need to do anything unless you want a different version from [http://www.voidspace.org.uk/python/configobj.html](http://www.voidspace.org.uk/python/configobj.html)
+
+In other words, you just need Python.
+
+#Optional
+
+To use XMPP support, you need [xmpppy](http://xmpppy.sourceforge.net/). On Debian-based distros this is packaged as python-xmpp.
+
+# Installation
+
+Download and unpack the latest version from the Downloads page.
+
+# Basic setup
+
+First create a copy of the sample configuration file, sample.config. Then edit the file and change the settings as required. There is a lot of help in the file itself, and also more detail on the ConfigFiles page.
+
+With your new config file (e.g. my.config) set up, you can run feed2omb like this:
+
+    python feed2omb.py --update --test my.config
+
+This won't actually post anything, but it will tell you what would happen. If it all looks ok, you can run the same command again without the --test:
+
+    python feed2omb.py --update my.config
+
+If you don't want to post all the older entries from the feed when you first set it up, you can use the --eat option to get rid of some.
+
+# Scheduling
+
+Once everything is set up correctly, you can set up a cron job to run the above command at an appropriate interval.
+

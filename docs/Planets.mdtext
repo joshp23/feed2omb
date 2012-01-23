@@ -1,0 +1,7 @@
+Planets (e.g. sites powered by Planet or Venus) produce aggregated feeds where the entries come from many different authors. Using the configuration directive:
+
+    msgmode = authtitle
+
+is the best way of handling these feeds, since the posted messages then contain the author information.
+
+Example output: [http://micro.ciarang.com/planetciaran](http://micro.ciarang.com/planetciaran)

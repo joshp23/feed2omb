@@ -1,0 +1,13 @@
+# Introduction
+
+As well as (or instead of) sending to a microblog account, messages generated from a particular feed can be sent to an XMPP account.
+
+To set this up, add the following information to the config file for the feed in question:
+
+    xmpp_server = im.example.com
+    xmpp_jid = from@im.example.com
+    xmpp_password = 1234
+    xmpp_to = dest@another.example.com
+
+You can also set the 'apibaseurl' field to an empty string (or omit it) to disable the microblog sending for that feed, so it only goes to XMPP.
+

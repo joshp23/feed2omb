@@ -1,0 +1,18 @@
+# Ampache-specific Help
+
+Some notes on dealing with [Ampache](http://ampache.org) feeds:
+
+## Timestamps
+
+The current version of Ampache doesn't include any timestamp information in the feed. Therefore, you need to use the following in the config file:
+
+    sentmode = sentlinks
+
+## Bad '2 hours ago' output
+
+Related to this, and very strangely, the entry itself contains text such as "2 hours ago" which is obviously always going to be incorrect. You can use regular expressions to remove this from the generated message before it is posted:
+
+    messageregex = '(.*) [0-9]+ [a-z]+ ago'
+    messagereplace = '\1'
+
+
