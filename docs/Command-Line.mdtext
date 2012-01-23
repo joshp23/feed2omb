@@ -1,0 +1,29 @@
+# Introduction
+
+Some aspects of operation are controlled by the command-line options you give, while others are controlled by the various [[ConfigFiles]]. The command-line options generally provide functions that you might vary from time to time, while the config files define the static information about each feed you are dealing with and how to handle it.
+
+The command line takes the following form:
+
+  feed2omb.py options configfiles
+
+You can specify any number of config files, to process multiple feeds in one go.
+
+# Options
+
+  -h, --help         Shows the command-line help and exits
+
+  -v, --version      Displays the version number and exits
+
+  -d, --debug        Print debugging info on standard output
+
+  -u, --update       Update the feeds using the config files 
+specified
+
+  -e, --eat          Eat items found - i.e. mark as sent, but do not send
+
+  -t, --test         Test only - display local output but do not post to omb
+                     or mark as sent
+
+  -m MAX, --max=MAX  Specify maximum number of items to process for each feed - overrides 'maxpost' in individual config files. Use 0 to post everything.
+
+

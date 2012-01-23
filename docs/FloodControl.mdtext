@@ -1,0 +1,30 @@
+It is rarely a good idea to post a large volume of messages to a microblog in one go. Feed2omb has several features to manage this problem.
+
+## Rate limiting
+
+Either via the command-line or in the config file for a particular feed, you can specify a maximum number of new feed entries to process in each run. By default, this is set to 2.
+
+Therefore, if you schedule updates every half hour, and have this set to 2, you will post a maximum of 4 items per hours, in batches of two. By adjusting the frequency of updates and the maximum items processed, you can achieve a sensible output based on the content of the feed.
+
+See [[ConfigFiles]] and [[Command-Line]] for more details.
+
+## Eating
+
+When setting up a new feed, you may not want to publish all the old entries to the microblog. By running feed2omb one or more times with the --eat command-line option, you can make it 'eat' old entries - in other words, marking them as processed, but not actually posting them.
+
+Once you've reached the point you want to start from, you can continue as normal without the --eat option.
+
+See [[Command-Line]] for more details.
+
+## Repeats
+
+Some feeds have an annoying habit of having entries reappear at the top of the feed, e.g. when a blog author makes a minor spelling correction to the post. This can easily be solved at the author's end - for example, using the [http://wordpress.org/extend/plugins/wp-minor-edit/](WP Minor Edit) plugin for Wordpress, or with the same feature that is built in to Habari.
+
+However, sometimes the author doesn't care. In this case, using the
+
+    sentmode = sentlinks
+
+configuration directive for a feed can be useful. In this mode, feed2omb will keep track of all the item links that have been sent, and will never send the same one twice.
+
+See [[ConfigFiles]] for more details.
+
