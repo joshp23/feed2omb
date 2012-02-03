@@ -1,6 +1,11 @@
-Regular Expressions provide a powerful way of modifying the content of messages before they are sent to the microblogging service. They can be used, for example, to prepend boilerplate text to the message (which might be used if you are directing multiple feeds to the same account) or to remove the same (which might be useful when reposting Twitter content to an open account elsewhere)
+Regular Expressions provide a powerful way of modifying the content of messages before they are
+sent to the microblogging service. They can be used, for example, to prepend boilerplate text to
+the message (which might be used if you are directing multiple feeds to the same account) or to
+remove the same (which might be useful when reposting Twitter content to an open account
+elsewhere)
 
-Much more creative things are possible, but the following example would remove the text "MarsPhoenix:" from the start of all messages:
+Much more creative things are possible, but the following example would remove the text
+"MarsPhoenix:" from the start of all messages:
 
     messageregex = 'MarsPhoenix:(.*)'
     messagereplace = '\1'
@@ -10,11 +15,17 @@ On the other hand, this one ADDS 'Example:' to the start of all messages:
     messageregex = '(.*)'
     messagereplace = 'Example:\1'
 
-You can also have multiple regular expressions and replacement strings, by making both entries a comma-separated list. The number of expressions and replacements must match. For example:
+You can also have multiple regular expressions and replacement strings, by making both entries a
+comma-separated list. The number of expressions and replacements must match. For example:
 
     messageregex = 'red','green'
     messagereplace = 'blue','yellow'
 
 will replace all occurrences of 'red' with 'blue', and all occurrences of 'green' with 'yellow'.
 
-These configuration directives are set on a per-feed basis, by adding them to the config file for the relevant feed. See [[ConfigFiles]] for more information.
+These configuration directives are set on a per-feed basis, by adding them to the config file for
+the relevant feed. See [[ConfigFiles]] for more information.
+
+The regular expressions are handled by the Python regex module. See the
+[documentation](http://docs.python.org/library/re.html#regular-expression-syntax) for full
+details of the syntax.
