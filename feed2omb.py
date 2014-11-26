@@ -1,8 +1,8 @@
 #
 # feed2omb - a tool for publishing atom/rss feeds to microblogging services
-# Copyright (C) 2008-2012, Ciaran Gultnieks
+# Copyright (C) 2008-2014, Ciaran Gultnieks
 #
-# Version 0.9.2
+# Version 0.9.4
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
