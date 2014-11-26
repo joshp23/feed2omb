@@ -7,7 +7,7 @@ Version 0.9.3
 # Usage
 
 For basic usage, see feed2omb --help and the sample config file. For
-detailed documentation, please see the doc/ directory.
+detailed documentation, please see the docs/ directory.
 
 To report problems or make feature requests please use the tracker at:
 
