@@ -4,18 +4,17 @@ Copyright (C) 2008-11, Ciaran Gultnieks
 
 Version 0.9.3
 
-== Usage ==
+# Usage
 
-For basic usage, see feed2omb --help and the sample config file. Please see
-http://projects.ciarang.com/p/feed2omb for full details and documentation.
+For basic usage, see feed2omb --help and the sample config file. For
+detailed documentation, please see the doc/ directory.
 
-To report problems, or make feature requests (which are very welcome)
-please use the tracker at:
+To report problems or make feature requests please use the tracker at:
 
-    http://projects.ciarang.com/p/feed2omb/issues/
+    https://gitlab.com/CiaranG/feed2omb/issues
 
 
-== License ==
+# License
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +29,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-== Coding Standards ==
+# Coding Standards
 
 To encourage collaboration and improve readability for the widest possible
 audience, all code follows the PEP-8 standard as closely as possible. See:
