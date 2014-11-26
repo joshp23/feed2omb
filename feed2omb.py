@@ -424,10 +424,16 @@ for thisconfig in args:
                         #currently!
 
                         jid = xmpp.protocol.JID(config['xmpp_jid'])
-                        client = xmpp.Client(jid.getDomain(), debug=[])
-                        con = client.connect()
-                        client.auth(jid.getNode(), config['xmpp_password'],
-                            resource="feed2omb")
+                        # check client variable existence
+                        try:
+                            client
+                        except NameError:
+                            # create client and connect, only if not connected
+                            client = xmpp.Client(jid.getDomain(), debug=[])
+                            con = client.connect()
+                            client.auth(jid.getNode(), config['xmpp_password'],
+                                resource="feed2omb")
+                        
                         client.send(xmpp.protocol.Message(config['xmpp_to'],
                             text))
 
