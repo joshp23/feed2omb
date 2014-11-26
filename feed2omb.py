@@ -433,9 +433,21 @@ for thisconfig in args:
                             con = client.connect()
                             client.auth(jid.getNode(), config['xmpp_password'],
                                 resource="feed2omb")
-                        
-                        client.send(xmpp.protocol.Message(config['xmpp_to'],
-                            text))
+                            # if post to room, join the room, only once too
+                            if 'xmpp_room' in config and config['xmpp_room'] != "" and \
+                               'xmpp_nick' in config and config['xmpp_nick'] != "":
+                                client.send(xmpp.Presence(to="%s/%s" % (config['xmpp_room'], config['xmpp_nick'])))
+
+                        # send message to room or to the JID
+                        if 'xmpp_room' in config and config['xmpp_room'] != "" and \
+                           'xmpp_nick' in config and config['xmpp_nick'] != "":
+                            msg = xmpp.protocol.Message(body=text)
+                            msg.setTo(config['xmpp_room'])
+                            msg.setType('groupchat')
+                            client.send(msg)
+                        else:
+                            client.send(xmpp.protocol.Message(config['xmpp_to'],
+                                text))
 
             #Record that we have sent this entry...
             if sentmode == 'timestamp':
