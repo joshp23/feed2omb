@@ -125,7 +125,7 @@ def shorten_lilurl(url, host):
     return (shorturl, len(shorturl))
 
 
-ddef shorten_yourls(url, host):
+def shorten_yourls(url, host):
     try:
         if host is None:
             print "Configuration error - yourls shortener requires a host"
