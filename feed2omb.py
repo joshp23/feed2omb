@@ -33,6 +33,8 @@ import time
 from urllib import urlencode
 from optparse import OptionParser
 
+import json
+
 #Supressing all warnings, just to get rid of all the deprecation warnings
 #that are spewed out by xmpppy...
 import warnings
@@ -74,7 +76,7 @@ def shorten_bitly(url, host):
         #a seemlingly innocuous URL - this is a fallback for that
         #scenario...
         print 'Failed to get short URL'
-        shorturl = '<no link>'
+        shorturl = url
     return (shorturl, len(shorturl))
 
 
@@ -89,7 +91,7 @@ def shorten_jmp(url, host):
         #a seemlingly innocuous URL - this is a fallback for that
         #scenario...
         print 'Failed to get short URL'
-        shorturl = '<no link>'
+        shorturl = url
     return (shorturl, len(shorturl))
 
 
@@ -119,7 +121,7 @@ def shorten_lilurl(url, host):
         return (shorturl, len(shorturl))
     except:
         print 'Failed to get short URL'
-        shorturl = '<no link>'
+        shorturl = url
     return (shorturl, len(shorturl))
 
 
@@ -128,23 +130,16 @@ def shorten_yourls(url, host):
         if host is None:
             print "Configuration error - yourls shortener requires a host"
             sys.exit(1)
-        params = {'url': url, 'action': 'shorturl'}
+        params = {'url': url, 'action': 'shorturl', 'format': 'json', 'signature': config['urlshortenkey']}
         data = urlencode(params)
-        req = urllib2.Request(host + '/index.php', data)
+        req = urllib2.Request(host + '/yourls-api.php', data)
         response = urllib2.urlopen(req)
-        result = response.read()
-        #It's a hack, but I don't want to get involved in "which parser,
-        #which dom, make sure you have these dependencies installed" just
-        #to pull a tiny bit of text out of a bigger bit of text, so...
-        index_start = result.find('<p>Short URL: <code><a href="')
-        index_end = result.find('"', index_start + 29)
-        if index_start == -1 or index_end == -1:
-            raise Exception("Link not found")
-        shorturl = result[index_start + 29: index_end]
+	result = json.load(response)
+        shorturl = result['shorturl']
         return (shorturl, len(shorturl))
     except:
         print 'Failed to get short URL'
-        shorturl = '<no link>'
+        shorturl = url
     return (shorturl, len(shorturl))
 
 
@@ -280,6 +275,19 @@ for thisconfig in args:
         print "Option one - register, get details, put in config file"
         print "Option two - use a different shortener"
         sys.exit(1)
+        
+    #If we've been told to use YOURLS, check cfg and make sure we have an 
+    #API key if necessary...
+    if urlshortener == 'yourls':
+        if 'urlshortencfg' in config:
+            urlshortencfg = config['urlshortencfg']
+        else: 
+            urlshortencfg = 'public'
+        if urlshortencfg == 'private' and (not config.has_key('urlshortenkey')):
+            print "YOURLS is set to Private: An API key must be specified."
+            print "Please retreive your signature token from YOURLS admin interface"
+            print "and update the config file."            
+            sys.exit(1)        
 
     #Determine hashtag mode...
     if 'hashtags' in config:
