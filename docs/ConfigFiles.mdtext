@@ -37,7 +37,7 @@ Specifies the user's password on the target microblogging service. Example:
 Specifies how urls are shortened. Possible values are:
 
 * lilurl - use a lilURL-based shortening service - specify the host using the urlshortenhost directive
-* yourls - use a [YOURLS](http://yourls.org/)-based shortening service - specify the host using the urlshortenhost directive
+* yourls - use a [YOURLS](http://yourls.org/)-based shortening service - specify the host using the urlshortenhost directive and optionally set urlshortencfg and set an urlshorten key
 * bit.ly - shorten the url using the service at http://bit.ly (default)
 * laconica - assume that Laconica will shorten the url automatically
 * none - do not shorten (drastically reducing available message space)
@@ -52,9 +52,14 @@ If the 'lilurl' or 'yourls' urlshortener is used, this specifies the host to use
 
     urlshortenhost = http://ur1.ca
 
+If the 'yourls' urlshortener is used, you can specifiy a public or private instance here. Example:
+
+    urlshortencfg = public
+
 #urlshortenlogin and urlshortenkey
 
-If using the bit.ly URL shortener, you need to use these to specify your login and API key.
+If using the bit.ly URL shortener, you need to use these to specify your login and API key. 
+If using yourls and urlshortencfg is set to 'private', you need to set an API key.
 
 Example:
 
