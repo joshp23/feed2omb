@@ -125,12 +125,16 @@ def shorten_lilurl(url, host):
     return (shorturl, len(shorturl))
 
 
-def shorten_yourls(url, host):
+ddef shorten_yourls(url, host):
     try:
         if host is None:
             print "Configuration error - yourls shortener requires a host"
             sys.exit(1)
-        params = {'url': url, 'action': 'shorturl', 'format': 'json', 'signature': config['urlshortenkey']}
+        if config['urlshortencfg'] == 'private':
+            signature = config['urlshortenkey']
+            params = {'url': url, 'action': 'shorturl', 'format': 'json', 'signature': signature}
+        else:
+            params = {'url': url, 'action': 'shorturl', 'format': 'json'}
         data = urlencode(params)
         req = urllib2.Request(host + '/yourls-api.php', data)
         response = urllib2.urlopen(req)
@@ -141,7 +145,6 @@ def shorten_yourls(url, host):
         print 'Failed to get short URL'
         shorturl = url
     return (shorturl, len(shorturl))
-
 
 def shorten_none(url, host):
     return (url, len(url))
