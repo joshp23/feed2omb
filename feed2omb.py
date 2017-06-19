@@ -193,11 +193,11 @@ if not (options.debug or options.eat or options.test or options.version):
     sys.stdout = of
 
 if options.version:
-    print "feed2omb version 0.9.2\nCopyright 2008-12 Ciaran Gultnieks"
+    print "feed2omb version 0.9.5\nCopyright 2008-17 Ciaran Gultnieks"
     sys.exit(0)
 
 #Set user agent for the feed parser...
-feedparser.USER_AGENT = "feed2omb/0.9.2 +http://projects.ciarang.com/p/feed2omb/"
+feedparser.USER_AGENT = "feed2omb/0.9.5 +http://projects.ciarang.com/p/feed2omb/"
 
 for thisconfig in args:
 
